@@ -1,0 +1,19 @@
+# --- Python 虛擬環境 ---
+venv/
+.venv/
+env/
+ENV/
+
+# --- Python 快取與編譯檔 ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- 環境變數與私密資訊 ---
+.env
+.flaskenv
+
+# --- 編輯器設定 (選用) ---
+.vscode/
+.idea/
+*.swp
