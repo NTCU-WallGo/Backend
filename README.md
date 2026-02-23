@@ -2,7 +2,7 @@
 * 建立虛擬環境  
 `python -m venv .venv`
 * 啟動虛擬環境  
-`venv\Scripts\activate`
+`.venv\Scripts\activate`
 * 下載 FastAPI 相關套件
 ` pip install "fastapi[standard]"`
 * 啟動 FastAPI  
