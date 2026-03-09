@@ -12,6 +12,7 @@ __pycache__/
 # --- 環境變數與私密資訊 ---
 .env
 .flaskenv
+*.db
 
 # --- 編輯器設定 (選用) ---
 .vscode/
