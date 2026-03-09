@@ -1,8 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import os
+import requests
+from dotenv import load_dotenv
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from ..model.db import get_db, User
+
+load_dotenv() # 讀取 .env 檔案
+TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET")
 
 router = APIRouter()
 
@@ -14,17 +20,37 @@ pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 # Pydantic 模型：定義前端傳進來的資料格式，進行資料驗證與設定管理
 class UserRegister(BaseModel):
-    username: str
-    password: str
+    username: str = Field(..., min_length=4, max_length=20, pattern="^[a-zA-Z0-9_]+$")
+    password: str = Field(..., min_length=8)
     email: EmailStr
+    captcha_token: str
 
 class UserLogin(BaseModel):
     username: str
     password: str
 
+def verify_turnstile(token: str):
+
+    if not TURNSTILE_SECRET:
+        print("錯誤: 找不到 TURNSTILE_SECRET 環境變數")
+        return False
+
+    # Cloudflare 的驗證 API
+    response = requests.post(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        data={
+            "secret": TURNSTILE_SECRET, 
+            "response": token
+        }
+    )
+    return response.json().get("success", False)
+
 # --- 註冊 API ---
 @router.post("/register")
-def register(user: UserRegister, db: Session = Depends(get_db)):
+def register(user: UserRegister,  db: Session = Depends(get_db)):
+    if not verify_turnstile(user.captcha_token):
+        raise HTTPException(status_code=400, detail="驗證碼無效或過期，請重試")
+    
     # 檢查帳號是否已存在，物件.first() => 資料
     db_user = db.query(User).filter(User.username == user.username).first()
     if db_user:

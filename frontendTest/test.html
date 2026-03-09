@@ -12,6 +12,7 @@
         button:hover { background-color: #0056b3; }
         #message { margin-top: 20px; color: blue; font-weight: bold; }
     </style>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script> 
 </head>
 <body>
 
@@ -22,6 +23,7 @@
         <input type="text" id="reg_user" placeholder="帳號">
         <input type="email" id="reg_email" placeholder="電子信箱">
         <input type="password" id="reg_pass" placeholder="密碼">
+        <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>  // captcha_token
         <button onclick="handleAuth('register')">點我註冊</button>
     </div>
 
@@ -46,10 +48,21 @@
 
             if (type === 'register') {
                 endpoint = "/register";
+
+                // 抓取 Turnstile 產生的 token
+                const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]').value;
+
+                if (!turnstileResponse) {
+                    msgDiv.style.color = "red";
+                    msgDiv.innerText = "請先完成安全驗證";
+                    return;
+                }
+
                 payload = {
                     username: document.getElementById('reg_user').value,
                     email: document.getElementById('reg_email').value,
-                    password: document.getElementById('reg_pass').value
+                    password: document.getElementById('reg_pass').value,
+                    captcha_token: turnstileResponse  // 傳回後端用
                 };
             } else {
                 endpoint = "/login";
@@ -79,6 +92,13 @@
                 msgDiv.style.color = "red";
                 msgDiv.innerText = "無法連線至後端伺服器，請檢查 FastAPI 是否已啟動";
             }
+        }
+
+        // 若註冊失敗，建議重置 Turnstile 元件
+        if (!response.ok && type === 'register') {
+
+            // 如果驗證失敗，讓使用者可以重試
+            turnstile.reset(); 
         }
     </script>
 </body>
