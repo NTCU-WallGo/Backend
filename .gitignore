@@ -18,3 +18,9 @@ __pycache__/
 .vscode/
 .idea/
 *.swp
+
+# 忽略 SQLite 數據庫文件
+app/model/data/*.db
+app/model/data/*.db-journal
+
+!app/model/data/.gitkeep

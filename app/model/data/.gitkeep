@@ -1,0 +1,2 @@
+mkdir -p app/model/data
+echo > app/model/data/.gitkeep
