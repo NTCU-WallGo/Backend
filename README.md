@@ -32,7 +32,7 @@
     - /register, /login, /me API 實作
 
 ### 系統資料流程圖 (Simplified DFD)
-![系統資料流程圖](.\document\DataFlowDiagram.png)
+![系統資料流程圖](document/DataFlowDiagram.png)
 
 ## 帳號密碼規範 (Validation)
 為了確保系統安全性，後端針對帳號與密碼設有嚴格的 Pydantic 校驗規則：
