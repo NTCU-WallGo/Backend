@@ -89,11 +89,13 @@ Backend
 
 * .gitignore
     * 不要上傳 .venv, .env
-* /.venv 
+* .venv/ 
     * 由使用者自行建立
 * .env 
     * 由使用者自行建立
     * 可複製 .env.example 修改檔名為 .env，並修改當中參數
+    * 註冊一個 mailtrap 的帳號
+        * mailtrap.io -> 選 sandbox -> 右邊 integration 中有 username 和 password (點擊就可以註冊) 
 
 ## 安裝與環境需求 (Installation & Requirements)
 ### 系統需求
